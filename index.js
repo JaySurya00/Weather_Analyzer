@@ -1,4 +1,5 @@
 // index.js
+const dbConnect= require('./config/db');
 
 const { fetchWeatherData } = require('./services/weatherService');
 const { processWeatherData } = require('./services/dataProcessor');
@@ -15,13 +16,13 @@ const startMonitoring = async () => {
         if(!process.env.API_KEY){
             throw new Error('API not defined');
         }
+        await dbConnect();
         setInterval(async () => {
             const rawWeatherData = await fetchWeatherData();
             const processedWeatherData = processWeatherData(rawWeatherData);
-            dailyWeather(processedData);
-            alertSystem(processedData);
-            await weatherSummary(processedData);
-            // checkAlerts(processedData);
+            dailyWeather(processedWeatherData);
+            alertSystem(processedWeatherData);
+            await weatherSummary(processedWeatherData);
         },   (process.env.INTERVAL || 2) * 60 * 1000); // every 5 minutes
     }
     catch (error) {
