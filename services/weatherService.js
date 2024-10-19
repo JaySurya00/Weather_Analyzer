@@ -1,9 +1,8 @@
 // weatherService.js
 const axios = require('axios');
+const CITIES= require('../config/citiesConfig');
 
-const API_KEY = process.env.API_KEY || "b2ae3f28eba3641cde38281c89801d49";
-
-const CITIES = ['Delhi'];
+const API_KEY = process.env.API_KEY;
 
 const fetchWeatherData = async () => {
     try {
@@ -16,6 +15,5 @@ const fetchWeatherData = async () => {
         throw error;
     }
 };
-fetchWeatherData();
 
 module.exports = { fetchWeatherData };
