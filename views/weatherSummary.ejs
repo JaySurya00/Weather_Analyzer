@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Summary</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Link your CSS file -->
+</head>
+<body>
+    <h1>Daily Weather Summaries</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>City</th>
+                <th>Date</th>
+                <th>Average Temperature (°C)</th>
+                <th>Max Temperature (°C)</th>
+                <th>Min Temperature (°C)</th>
+                <th>Dominant Condition</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% summaries.forEach(summary => { %>
+                <tr>
+                    <td><%= summary.city %></td>
+                    <td><%= new Date(summary.date).toLocaleDateString() %></td>
+                    <td><%= summary.averageTemp.toFixed(2) %></td>
+                    <td><%= summary.maxTemp %></td>
+                    <td><%= summary.minTemp %></td>
+                    <td><%= summary.dominantCondition %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+</html>

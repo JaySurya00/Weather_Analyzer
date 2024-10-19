@@ -1,33 +1,36 @@
-// index.js
-const dbConnect= require('./config/db');
-
 const { fetchWeatherData } = require('./services/weatherService');
 const { processWeatherData } = require('./services/dataProcessor');
-const dailyWeather= require('./services/dailyWeather');
-const weatherSummary= require('./services/weatherSummary');
-const alertSystem= require('./services/alertSystem');
+const dailyWeather = require('./services/dailyWeather');
+const weatherSummary = require('./services/weatherSummary');
+const alertSystem = require('./services/alertSystem');
+const dbConnect = require('./config/db');
+const app = require('./app');
 
-const startMonitoring = async () => {
+const start = async () => {
     try {
-        console.log();
-        if(!process.env.MONGO_URI){
+        if (!process.env.MONGO_URI) {
             throw new Error('Mongo_URI not defined');
         }
-        if(!process.env.API_KEY){
+        if (!process.env.API_KEY) {
             throw new Error('API not defined');
         }
         await dbConnect();
+
         setInterval(async () => {
             const rawWeatherData = await fetchWeatherData();
             const processedWeatherData = processWeatherData(rawWeatherData);
             dailyWeather(processedWeatherData);
             alertSystem(processedWeatherData);
             await weatherSummary(processedWeatherData);
-        },   (process.env.INTERVAL || 2) * 60 * 1000); // every 5 minutes
+        }, (process.env.INTERVAL || 2) * 60 * 1000); // every 5 minutes
     }
     catch (error) {
         console.log(error);
     }
+    app.listen(process.env.PORT || 3000, () => {
+        console.log(`Server running on port ${process.env.PORT || 3000}`)
+    })
 };
 
-startMonitoring().catch(console.error);
+
+start().catch(console.error);
