@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Summary</title>
+    <title>Weather Summary and Trend for <%= new Date(date).toLocaleDateString() %></title>
     <link rel="stylesheet" href="/styles.css"> <!-- Link your CSS file -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
 </head>
 <body>
-    <h1>Daily Weather Summaries</h1>
+    <h1>Daily Weather Summaries and Trend for <%= new Date(date).toLocaleDateString() %></h1>
+
+    <!-- Weather Summaries Table -->
+    <h2>Weather Summaries</h2>
     <table>
         <thead>
             <tr>
@@ -20,11 +24,11 @@
             </tr>
         </thead>
         <tbody>
-            <% summaries.forEach(summary => { %>
+            <% summariesForDate.forEach(summary => { %>
                 <tr>
                     <td><%= summary.city %></td>
                     <td><%= new Date(summary.date).toLocaleDateString() %></td>
-                    <td><%= summary.averageTemp.toFixed(2) %></td>
+                    <td><%= summary.averageTemp%></td>
                     <td><%= summary.maxTemp %></td>
                     <td><%= summary.minTemp %></td>
                     <td><%= summary.dominantCondition %></td>
@@ -32,5 +36,70 @@
             <% }) %>
         </tbody>
     </table>
+
+    <!-- Weather Trend Chart -->
+    <h2>Weather Trend</h2>
+    <canvas id="weatherTrendChart" width="400" height="200"></canvas>
+
+    <script>
+        // Extract data for the specific date
+        const summaries = <%- JSON.stringify(summariesForDate) %>;
+        const cities = summaries.map(summary => summary.city);
+        const averageTemps = summaries.map(summary => summary.averageTemp);
+        const maxTemps = summaries.map(summary => summary.maxTemp);
+        const minTemps = summaries.map(summary => summary.minTemp);
+
+        // Set up the Chart.js line chart
+        const ctx = document.getElementById('weatherTrendChart').getContext('2d');
+        const weatherTrendChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: cities, // Cities as X-axis labels
+                datasets: [
+                    {
+                        label: 'Average Temp (°C)',
+                        data: averageTemps,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true
+                    },
+                    {
+                        label: 'Max Temp (°C)',
+                        data: maxTemps,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        fill: true
+                    },
+                    {
+                        label: 'Min Temp (°C)',
+                        data: minTemps,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'City'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Temperature (°C)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- Optionally, add a link back to the main page -->
+    <a href="/weather-summary">Back to Weather Summary</a>
 </body>
 </html>
+

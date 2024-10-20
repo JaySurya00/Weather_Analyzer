@@ -15,13 +15,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/weather-summary', async (req, res) => {
     try {
-        const summaries = await WeatherSummary.find(); 
-        res.render('weatherSummary', { summaries }); 
+        // Fetch all weather summaries
+        const summaries = await WeatherSummary.find();
+
+        // Get today's date in 'YYYY-MM-DD' format
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        // Fetch weather summaries for the current date
+        const summariesForDate = await WeatherSummary.find({ date: currentDate });
+
+        // Render the merged EJS template
+        res.render('weatherSummary', { summaries, summariesForDate, date: currentDate });
     } catch (error) {
         console.error("Error fetching weather summaries:", error);
         res.status(500).send("Internal Server Error");
     }
 });
+
 
 
 

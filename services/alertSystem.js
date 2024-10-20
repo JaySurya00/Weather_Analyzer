@@ -14,6 +14,7 @@ const triggerAlert = (city, temp, main, type) => {
 };
 
 const checkThreshold = (weatherDataArray) => {
+    console.log(weatherDataArray);
    
     weatherDataArray.forEach(weatherData => {
         const { city, temp, main } = weatherData; 
